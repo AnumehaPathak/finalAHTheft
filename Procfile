@@ -1,1 +1,1 @@
-web: gunicorn facebook.wsgi
+web: gunicorn antihometheft.wsgi
