@@ -1,1 +1,1 @@
-web: gunicorn hellobot.wsgi
+web: gunicorn facebook.wsgi
