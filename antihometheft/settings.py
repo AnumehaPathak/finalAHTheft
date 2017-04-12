@@ -26,7 +26,7 @@ SECRET_KEY = '$-@^tu4=0$_7_6d1oioas^jv)qb#=5y%)6kpl$2e4ff0(!ehj1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://antihta.herokuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['antihta.herokuapp.com','127.0.0.1']
 
 
 # Application definition
