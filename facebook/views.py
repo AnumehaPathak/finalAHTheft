@@ -17,34 +17,27 @@ VERIFY_TOKEN='AntiHomeTheft'
 
 PAGE_ACCESS_TOKEN='EAAJAZAZAjWWIQBAEWeTWS9gp9Q9dXkPQC5oKG006J9l2G4jCZB99K7bHNhhi6Eg24jjZAxhOSWgAaN8KwinZBJ6vkWFiPv7oVgeOiQfZAULxlmGniXki5LLei8lK0iZArkKlZCC3OepEqZBFHZCsTTgDlLLbzEfTQLFevBLxka4IKhqQZDZD'
 
-def chuck():
-    url='https://api.chucknorris.io/jokes/random'
-    resp=requests.get(url=url).text
-    data=json.loads(resp)
-    
-    val=data['value']
-    
-    url_info=data['url']
-    
-    icon=data['icon_url']
-    return val,url_info,icon
-
+def index(request):
+    output_text=find()
+    return HttpResponse(output_text,content_type='application/json')
 
 def post_facebook_message(fbid,message_text):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
+    text,image,url_info=find(message_text)
+    if text=='NULL':
+        text="No show with such name "
+    else:
+        pass
 
-    #output_text = wikisearch(message_text)
-    output_text=[0,0]
-    joke_link=[0,0]
-    output_image=[0,0]
-    output_text[0],joke_link[0],output_image[0] =chuck()
-    output_text[1],joke_link[1],output_image[1] =chuck()
-    #output_text=output_text.replace("Chuck Norris","Rajnikanth")
-    
-    
+    try:
+        if len(text) > 315:
+            text = text[3:315] + ' ...'
+    except KeyError:
+        text = ''
+
     response_msg_generic={
         "recipient":{
-            "id":fbid
+            "id":fbid 
           },
           "message":{
             "attachment":{
@@ -53,38 +46,20 @@ def post_facebook_message(fbid,message_text):
                 "template_type":"generic",
                 "elements":[
                   {
-                    "title":output_text[0],
-                    "item_url":"https://petersfancybrownhats.com",
-                    "image_url":output_image[0],
-                    "subtitle":"he he =D",
+                    "title":text,
+                    "item_url":url_info,
+                    "image_url":image,
+                    "subtitle":"Nostalgia",
                     "buttons":[
                       {
                         "type":"web_url",
-                        "url":joke_link[0],
+                        "url":url_info,
                         "title":"View Website"
                       },
                       {
                         "type":"postback",
-                        "title":"Another Joke",
-                        "payload":"RANDOM_JOKE"
-                      }              
-                    ]
-                  },
-                  {
-                    "title":output_text[1],
-                    "item_url":"https://petersfancybrownhats.com",
-                    "image_url":output_image[1],
-                    "subtitle":"he he =D",
-                    "buttons":[
-                      {
-                        "type":"web_url",
-                        "url":joke_link[1],
-                        "title":"View Website"
-                      },
-                      {
-                        "type":"postback",
-                        "title":"Another Joke",
-                        "payload":"RANDOM_JOKE"
+                        "title":"Start Chatting",
+                        "payload":"Another Show"
                       }              
                     ]
                   }
@@ -92,28 +67,44 @@ def post_facebook_message(fbid,message_text):
               }
             }
           }
+    
+
     }
+    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})
+    requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+    response_msg_generic=json.dumps(response_msg_generic)
+
+    #response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})
+    status=requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg_generic)
+    print status.json()
     
-    
-    
-    response_msg = json.dumps(response_msg_generic)
-    requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg_generic)
 
 def handle_postback(fbid,payload):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
-    output_text='Payload Recieved: '+payload
-    logg(payload,symbol="*")
+    
+    if payload=='Another Show':
+        output_text='What other shows you want to know about ? '
 
-    if payload=='RANDOM_JOKE':
-        post_facebook_message(fbid,'foo')
-    #response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":output_text}})
-    #status = requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
-
-def logg(message,symbol='-'):
-    print '%s\n %s \n%s'%(symbol*10,message,symbol*10)
+    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":output_text}})
+    status=requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+     
 
 
-# Create your views here.
+
+
+
+
+
+def find(title="girls"):
+    url="http://api.tvmaze.com/singlesearch/shows?q=%s"%(title)
+    resp = requests.get(url=url).text
+    data = json.loads(resp)
+    scoped_data=data["summary"]
+    image_url=data["image"]["medium"]
+    url_info=data['url']
+    
+    return scoped_data,image_url,url_info
+
 class MyChatBotView(generic.View):
     def get(self,request,*args,**kwargs):
         if self.request.GET['hub.verify_token']==VERIFY_TOKEN:
@@ -128,7 +119,6 @@ class MyChatBotView(generic.View):
     def post(self,request,*args,**kwargs):
         incoming_message=json.loads(self.request.body.decode('utf-8'))
         print incoming_message
-        logg(incoming_message)
 
         for entry in incoming_message['entry']:
             for message in entry['messaging']:
@@ -138,17 +128,15 @@ class MyChatBotView(generic.View):
                     else:
                         pass
                 except Exception as e:
-                    logg(e,symbol='-291-')
+                    print e
                 #print message
-                
                 try:
                     sender_id = message['sender']['id']
                     message_text = message['message']['text']
                     post_facebook_message(sender_id,message_text) 
                     
                 except Exception as e:
-                    logg(e,symbol='-168-')
+                    print e
                     pass
 
         return HttpResponse() 
-

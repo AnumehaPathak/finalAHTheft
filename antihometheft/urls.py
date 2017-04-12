@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from facebook.views import MyChatBotView
+from facebook.views import MyChatBotView,index
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$',index),
     url(r'^facebook_auth/?$',MyChatBotView.as_view()),
 ]
