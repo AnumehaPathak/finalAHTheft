@@ -23,6 +23,7 @@ def getResponse(request):
     if request.method == "POST":
         image = request.FILES.get('media')
         if image is not None:
+            id_user="1643983472284045"
             post_facebook_message(id_user,image)
         return HttpResponse("data received")
 
