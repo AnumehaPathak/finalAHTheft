@@ -80,7 +80,7 @@ def post_facebook_message(fbid,message_text):
         "attachment":{
           "type":"image",
           "payload":{
-            "url":image_url
+            "url":image
           }
         }
       }
