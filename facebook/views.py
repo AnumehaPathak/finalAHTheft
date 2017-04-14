@@ -26,52 +26,10 @@ def post_facebook_message(fbid,message_text):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
     text,image,url_info=find(message_text)
     print text,image,url_info
-    # if text is None:
-    #     text="No show with such name "
-    # else:
-    #     pass
-
-    # try:
-    #     if len(text) > 315:
-    #         text = text[3:315] + ' ...'
-    # except KeyError:
-    #     text = ''
-
-    # response_msg_generic={
-    #     "recipient":{
-    #         "id":fbid 
-    #       },
-    #       "message":{
-    #         "attachment":{
-    #           "type":"template",
-    #           "payload":{
-    #             "template_type":"generic",
-    #             "elements":[
-    #               {
-    #                 "title":"whatever",
-    #                 "item_url":url_info,
-    #                 "image_url":image,
-    #                 "subtitle":"Nostalgia",
-    #                 "buttons":[
-    #                   {
-    #                     "type":"web_url",
-    #                     "url":url_info,
-    #                     "title":"View Website"
-    #                   },
-    #                   {
-    #                     "type":"postback",
-    #                     "title":"Start Chatting",
-    #                     "payload":"Another Show"
-    #                   }              
-    #                 ]
-    #               }
-    #             ]
-    #           }
-    #         }
-    #       }
+    
     
 
-    # }
+    
     response_msg_image={
     "recipient":{
         "id":fbid
@@ -85,23 +43,19 @@ def post_facebook_message(fbid,message_text):
         }
       }
     }       
-    #response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":message_text}})
-    #requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
     response_msg=json.dumps(response_msg_image)
 
-    #response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})
     requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
-    #print status.json()
     
 
-def handle_postback(fbid,payload):
-    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
+# def handle_postback(fbid,payload):
+#     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
     
-    if payload=='Another Show':
-        output_text='What other shows you want to know about ? '
+#     if payload=='Another Show':
+#         output_text='What other shows you want to know about ? '
 
-    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":output_text}})
-    status=requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
+#     response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":output_text}})
+#     status=requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
      
 
 
@@ -137,14 +91,14 @@ class MyChatBotView(generic.View):
 
         for entry in incoming_message['entry']:
             for message in entry['messaging']:
-                try:
-                    if 'postback' in message:
-                        handle_postback(message['sender']['id'],message['postback']['payload'])
-                    else:
-                        pass
-                except Exception as e:
-                    print e
-                #print message
+                # try:
+                #     if 'postback' in message:
+                #         handle_postback(message['sender']['id'],message['postback']['payload'])
+                #     else:
+                #         pass
+                # except Exception as e:
+                #     print e
+                # #print message
                 try:
                     sender_id = message['sender']['id']
                     message_text = message['message']['text']
