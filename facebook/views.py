@@ -25,58 +25,72 @@ def index(request):
 def post_facebook_message(fbid,message_text):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
     text,image,url_info=find(message_text)
-    if text is None:
-        text="No show with such name "
-    else:
-        pass
+    print text,image,url_info
+    # if text is None:
+    #     text="No show with such name "
+    # else:
+    #     pass
 
-    try:
-        if len(text) > 315:
-            text = text[3:315] + ' ...'
-    except KeyError:
-        text = ''
+    # try:
+    #     if len(text) > 315:
+    #         text = text[3:315] + ' ...'
+    # except KeyError:
+    #     text = ''
 
-    response_msg_generic={
-        "recipient":{
-            "id":fbid 
-          },
-          "message":{
-            "attachment":{
-              "type":"template",
-              "payload":{
-                "template_type":"generic",
-                "elements":[
-                  {
-                    "title":text,
-                    "item_url":url_info,
-                    "image_url":image,
-                    "subtitle":"Nostalgia",
-                    "buttons":[
-                      {
-                        "type":"web_url",
-                        "url":url_info,
-                        "title":"View Website"
-                      },
-                      {
-                        "type":"postback",
-                        "title":"Start Chatting",
-                        "payload":"Another Show"
-                      }              
-                    ]
-                  }
-                ]
-              }
-            }
-          }
+    # response_msg_generic={
+    #     "recipient":{
+    #         "id":fbid 
+    #       },
+    #       "message":{
+    #         "attachment":{
+    #           "type":"template",
+    #           "payload":{
+    #             "template_type":"generic",
+    #             "elements":[
+    #               {
+    #                 "title":"whatever",
+    #                 "item_url":url_info,
+    #                 "image_url":image,
+    #                 "subtitle":"Nostalgia",
+    #                 "buttons":[
+    #                   {
+    #                     "type":"web_url",
+    #                     "url":url_info,
+    #                     "title":"View Website"
+    #                   },
+    #                   {
+    #                     "type":"postback",
+    #                     "title":"Start Chatting",
+    #                     "payload":"Another Show"
+    #                   }              
+    #                 ]
+    #               }
+    #             ]
+    #           }
+    #         }
+    #       }
     
 
-    }
+    # }
+    response_msg_image={
+    "recipient":{
+        "id":fbid
+      },
+      "message":{
+        "attachment":{
+          "type":"image",
+          "payload":{
+            "url":image_url
+          }
+        }
+      }
+    }       
     #response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":message_text}})
     #requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
-    response_msg_generic=json.dumps(response_msg_generic)
+    response_msg=json.dumps(response_msg_image)
 
     #response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})
-    requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg_generic)
+    requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
     #print status.json()
     
 
