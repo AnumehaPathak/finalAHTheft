@@ -48,20 +48,6 @@ def post_facebook_message(fbid,message_text):
     requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
     
 
-# def handle_postback(fbid,payload):
-#     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
-    
-#     if payload=='Another Show':
-#         output_text='What other shows you want to know about ? '
-
-#     response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":output_text}})
-#     status=requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
-     
-
-
-
-
-
 
 
 def find(title="girls"):
@@ -91,14 +77,6 @@ class MyChatBotView(generic.View):
 
         for entry in incoming_message['entry']:
             for message in entry['messaging']:
-                # try:
-                #     if 'postback' in message:
-                #         handle_postback(message['sender']['id'],message['postback']['payload'])
-                #     else:
-                #         pass
-                # except Exception as e:
-                #     print e
-                # #print message
                 try:
                     sender_id = message['sender']['id']
                     message_text = message['message']['text']
