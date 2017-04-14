@@ -17,15 +17,25 @@ VERIFY_TOKEN='AntiHomeTheft'
 
 PAGE_ACCESS_TOKEN='EAAKa0eCWBu4BAJjbRJv4TN3GeAd0KNKRTNHFcmJW6HZCuwDsSyatiDZBVVp8Wyz6n5ZAhEvZCohgFy4qMVUrzwxV8ZArn9v824r3uWLdwoJw112XbMhHBHfA0TvkVZBeXfgwu0ZAh2rrmkAUYgS9DK43ZBbnwKz4KhwdXJOURh93xAZDZD'
 
+
+@method_decorator(csrf_exempt)
+def getResponse(request):
+    if request.method == "POST":
+        image = request.FILES.get('media')
+        if image is not None:
+            post_facebook_message(id_user,image)
+        return HttpResponse("data received")
+
+
 def index(request):
     post_facebook_message("1531", "Hello")
     return HttpResponse('ok')
 
 
-def post_facebook_message(fbid,message_text):
+def post_facebook_message(fbid,image):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
-    text,image,url_info=find(message_text)
-    print text,image,url_info
+    # text,image,url_info=find(message_text)
+    # print text,image,url_info
     
     
 
