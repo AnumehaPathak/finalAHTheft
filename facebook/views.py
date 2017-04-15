@@ -21,12 +21,16 @@ PAGE_ACCESS_TOKEN='EAAKa0eCWBu4BAJjbRJv4TN3GeAd0KNKRTNHFcmJW6HZCuwDsSyatiDZBVVp8
 @method_decorator(csrf_exempt)
 def getResponse(request):
     print request.POST
+    print request.POST.__dict__
+    # print request.FILES
     if request.method == "POST":
         image = request.FILES.get('media')
         if image is not None:
             id_user="1490578364307193"
             post_facebook_message(id_user,image)
         return HttpResponse("data received")
+    else:
+        return HttpResponse("request is not post")
 
 
 def index(request):
