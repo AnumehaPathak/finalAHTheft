@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from facebook.views import *
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -23,3 +25,4 @@ urlpatterns = [
     url(r'^facebook_auth/?$',MyChatBotView.as_view()),
     url(r'^getResponse/?$',getResponse),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
