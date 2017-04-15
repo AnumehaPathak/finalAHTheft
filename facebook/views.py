@@ -11,7 +11,7 @@ import requests
 import pprint
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-from .models import ImageModel
+from .models import *
 # Create your views here.
 
 VERIFY_TOKEN='AntiHomeTheft'
@@ -27,8 +27,12 @@ def getResponse(request):
     if request.method == "POST":
         image = request.FILES.get('media')
         if image is not None:
-            id_user="1490578364307193"
-            post_facebook_message(id_user,image,"hello")
+            id_user=request.POST.get("id")
+            #1490578364307193
+            import pdb; pdb.set_trace()
+            fb_id = FacebookID.objects.get(pi_id=id_user).fb_id
+            # fb_id = FacebookID(pi_id=id_user).fb_id
+            post_facebook_message(fb_id,image,"hello")
         return HttpResponse("data received")
     else:
         return HttpResponse("request is not post")
@@ -99,6 +103,12 @@ class MyChatBotView(generic.View):
                 try:
                     sender_id = message['sender']['id']
                     message_text = message['message']['text']
+                    if FacebookID.objects.filter(pi_id=message_text).exists():
+                        fb_obj = FacebookID.objects.get(pi_id=message_text)
+                        fb_obj.fb_id=sender_id
+                        fb_obj.save()
+                    else:
+                        FacebookID.objects.create(pi_id=message_text,fb_id=sender_id).save()
                     post_facebook_message(sender_id,message_text) 
                     
                 except Exception as e:

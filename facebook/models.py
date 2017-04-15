@@ -6,3 +6,7 @@ from django.db import models
 # Create your models here.
 class ImageModel(models.Model):
 	image = models.ImageField()
+
+class FacebookID(models.Model):
+	pi_id = models.CharField(unique=True,max_length=200)
+	fb_id = models.CharField(max_length=200)
