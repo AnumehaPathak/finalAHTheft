@@ -21,6 +21,7 @@ PAGE_ACCESS_TOKEN='EAAKa0eCWBu4BAJjbRJv4TN3GeAd0KNKRTNHFcmJW6HZCuwDsSyatiDZBVVp8
 
 @method_decorator(csrf_exempt)
 def getResponse(request):
+
     print request.POST
     print request.POST.__dict__
     # print request.FILES
@@ -29,7 +30,7 @@ def getResponse(request):
         if image is not None:
             id_user=request.POST.get("id")
             #1490578364307193
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             fb_id = FacebookID.objects.get(pi_id=id_user).fb_id
             # fb_id = FacebookID(pi_id=id_user).fb_id
             post_facebook_message(fb_id,image,"hello")
@@ -66,7 +67,6 @@ def post_facebook_message(fbid,image,text):
       }
     }       
     response_msg = json.dumps(response_msg)
-    # response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})
     # import pdb;pdb.set_trace()
     requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
     
