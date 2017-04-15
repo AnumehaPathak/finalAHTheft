@@ -42,21 +42,21 @@ def index(request):
 def post_facebook_message(fbid,image,text):
     image = default_storage.save('image.jpg', ContentFile(image.read()))
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
-    # response_msg={
-    # "recipient":{
-    #     "id":fbid
-    #   },
-    #   "message":{
-    #     "attachment":{
-    #       "type":"image",
-    #       "payload":{
-    #         "url":image
-    #       }
-    #     }
-    #   }
-    # }       
-    # response_msg = json.dumps(response_msg)
-    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})
+    response_msg={
+    "recipient":{
+        "id":fbid
+      },
+      "message":{
+        "attachment":{
+          "type":"image",
+          "payload":{
+            "url":image
+          }
+        }
+      }
+    }       
+    response_msg = json.dumps(response_msg)
+    #response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})
     # import pdb;pdb.set_trace()
     requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
     
