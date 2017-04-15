@@ -20,6 +20,7 @@ PAGE_ACCESS_TOKEN='EAAKa0eCWBu4BAJjbRJv4TN3GeAd0KNKRTNHFcmJW6HZCuwDsSyatiDZBVVp8
 
 @method_decorator(csrf_exempt)
 def getResponse(request):
+
     print request.POST
     print request.POST.__dict__
     # print request.FILES
