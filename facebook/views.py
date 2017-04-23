@@ -44,6 +44,7 @@ def index(request):
     post_facebook_message("1531", "Hello")
     return HttpResponse('ok')
 
+@method_decorator(csrf_exempt)
 def kill(request):
     if request.method=="GET":
         if Pi.objects.filter(fb_id=sender_id).exists():
