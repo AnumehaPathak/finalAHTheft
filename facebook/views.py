@@ -131,6 +131,7 @@ class MyChatBotView(generic.View):
                         if Pi.objects.filter(fb_id=sender_id).exists():
                             pi = Pi.objects.get(fb_id=sender_id)
                             pi.kill=True
+                            pi.save()
                         else:
                             pi = Pi.objects.create(fb_id=sender_id,kill=True)
                             pi.save()
