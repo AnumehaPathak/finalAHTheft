@@ -12,6 +12,7 @@ import pprint
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from .models import *
+from django.http import JsonResponse
 # Create your views here.
 
 VERIFY_TOKEN='AntiHomeTheft'
@@ -43,6 +44,14 @@ def index(request):
     post_facebook_message("1531", "Hello")
     return HttpResponse('ok')
 
+def kill(request):
+    if request.method=="GET":
+        if Pi.objects.filter(fb_id=sender_id).exists():
+            pi = Pi.objects.get(fb_id=sender_id)
+            return JsonResponse({'kill':pi.kill})
+        else:
+            return JsonResponse({'kill':False})
+    return JsonResponse({'kill':False})
 
 def post_facebook_message(fbid,image,text):
     # image = default_storage.save('image.jpg', ContentFile(image.read()))
