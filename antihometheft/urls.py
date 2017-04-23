@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^facebook_auth/?$',MyChatBotView.as_view()),
     url(r'^getResponse/?$',getResponse),
     url(r'^kill/?$',kill),
+    url(r'^live/?$',live),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

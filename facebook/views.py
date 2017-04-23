@@ -19,6 +19,7 @@ VERIFY_TOKEN='AntiHomeTheft'
 
 PAGE_ACCESS_TOKEN='EAAKa0eCWBu4BAJjbRJv4TN3GeAd0KNKRTNHFcmJW6HZCuwDsSyatiDZBVVp8Wyz6n5ZAhEvZCohgFy4qMVUrzwxV8ZArn9v824r3uWLdwoJw112XbMhHBHfA0TvkVZBeXfgwu0ZAh2rrmkAUYgS9DK43ZBbnwKz4KhwdXJOURh93xAZDZD'
 
+live_global = False
 
 @method_decorator(csrf_exempt)
 def getResponse(request):
@@ -57,6 +58,23 @@ def kill(request):
             return JsonResponse({'kill':False})
     return JsonResponse({'kill':False})
 
+
+@method_decorator(csrf_exempt)
+def live(request):
+    if request.method=="GET":
+        # import pdb; pdb.set_trace()
+        pi_id = request.GET.get('id')
+        sender_id = FacebookID.objects.get(pi_id=pi_id).fb_id
+        if Live.objects.filter(fb_id=sender_id).exists():
+            live = Live.objects.get(fb_id=sender_id)
+            if live.live:
+                send_fb_message("Pi is up and running")
+                live_global = True
+            return JsonResponse({'live':live.live})
+        else:
+            return JsonResponse({'live':False})
+    return JsonResponse({'live':False})
+
 def post_facebook_message(fbid,image,text):
     # image = default_storage.save('image.jpg', ContentFile(image.read()))
     image = ImageModel(image=image)
@@ -82,9 +100,11 @@ def post_facebook_message(fbid,image,text):
     response_msg = json.dumps(response_msg)
     # import pdb;pdb.set_trace()
     requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
-    
 
-
+def post_facebook_message(fbid,text):
+    post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
+    response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})   
+    requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
 
 def find(title="girls"):
     url="http://api.tvmaze.com/singlesearch/shows?q=%s"%(title)
@@ -141,8 +161,22 @@ class MyChatBotView(generic.View):
                         pi.save()
                     else:
                         #internet response for pi
-                        pass
-                        
+                        live=None
+                        if Live.objects.filter(fb_id=sender_id).exists():
+                            live = Live.objects.get(fb_id=sender_id)
+                            live.live=True
+                            live.save()
+                        else:
+                            live = live.objects.create(fb_id=sender_id,live=True)
+                            live.save()
+                        import time
+                        time.sleep(7)
+                        live.live=False;
+                        live.save()
+                        if not live_global:
+                            send_fb_message("Pi not connected. Try restarting it.")
+                        else:
+                            live_global=False                    
                 except Exception as e:
                     print e
                     pass

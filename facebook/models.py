@@ -14,3 +14,7 @@ class FacebookID(models.Model):
 class Pi(models.Model):
 	fb_id = models.CharField(unique=True,max_length=200)
 	kill = models.BooleanField(default=False)
+
+class Live(models.Model):
+	fb_id = models.CharField(unique=True,max_length=200)
+	live = models.BooleanField(default=False)
