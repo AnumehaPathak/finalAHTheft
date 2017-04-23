@@ -10,3 +10,7 @@ class ImageModel(models.Model):
 class FacebookID(models.Model):
 	pi_id = models.CharField(unique=True,max_length=200)
 	fb_id = models.CharField(max_length=200)
+
+class Pi(models.Model):
+	fb_id = models.CharField(unique=True,max_length=200)
+	kill = models.BooleanField(default=False)

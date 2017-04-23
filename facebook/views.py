@@ -103,14 +103,29 @@ class MyChatBotView(generic.View):
                 try:
                     sender_id = message['sender']['id']
                     message_text = message['message']['text']
-                    if FacebookID.objects.filter(pi_id=message_text).exists():
-                        fb_obj = FacebookID.objects.get(pi_id=message_text)
-                        fb_obj.fb_id=sender_id
-                        fb_obj.save()
+                    list_of_pi_kill_words = ["kill","shutdown","bye","goodbye"]
+                    if message_text.isdigit():
+                        if FacebookID.objects.filter(pi_id=message_text).exists():
+                            fb_obj = FacebookID.objects.get(pi_id=message_text)
+                            fb_obj.fb_id=sender_id
+                            fb_obj.save()
+                        else:
+                            FacebookID.objects.create(pi_id=message_text,fb_id=sender_id).save()
+                        post_facebook_message(sender_id,message_text) 
+                    elif message_text.lower() in list_of_pi_kill_words:
+                        #shutdown pi
+                        if Pi.objects.filter(fb_id=sender_id).exists():
+                            pi = Pi.objects.get(fb_id=sender_id)
+                            pi.kill=True
+                        else:
+                            pi = Pi.objects.create(fb_id=sender_id,kill=True).save()
+                        import time
+                        time.sleep(7)
+                        pi.kill=False;
+                        pi.save()
                     else:
-                        FacebookID.objects.create(pi_id=message_text,fb_id=sender_id).save()
-                    post_facebook_message(sender_id,message_text) 
-                    
+                        #internet response for pi
+                        
                 except Exception as e:
                     print e
                     pass
