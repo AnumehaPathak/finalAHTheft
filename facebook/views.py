@@ -127,11 +127,13 @@ class MyChatBotView(generic.View):
                         post_facebook_message(sender_id,message_text) 
                     elif message_text.lower() in list_of_pi_kill_words:
                         #shutdown pi
+                        pi=None
                         if Pi.objects.filter(fb_id=sender_id).exists():
                             pi = Pi.objects.get(fb_id=sender_id)
                             pi.kill=True
                         else:
-                            pi = Pi.objects.create(fb_id=sender_id,kill=True).save()
+                            pi = Pi.objects.create(fb_id=sender_id,kill=True)
+                            pi.save()
                         import time
                         time.sleep(7)
                         pi.kill=False;
