@@ -6,3 +6,4 @@ from .models import *
 # Register your models here.
 admin.site.register(ImageModel)
 admin.site.register(FacebookID)
+admin.site.register(Pi)

@@ -47,6 +47,9 @@ def index(request):
 @method_decorator(csrf_exempt)
 def kill(request):
     if request.method=="GET":
+        # import pdb; pdb.set_trace()
+        pi_id = request.GET.get('id')
+        sender_id = FacebookID.objects.get(pi_id=pi_id).fb_id
         if Pi.objects.filter(fb_id=sender_id).exists():
             pi = Pi.objects.get(fb_id=sender_id)
             return JsonResponse({'kill':pi.kill})
