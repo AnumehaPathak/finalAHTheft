@@ -134,6 +134,7 @@ class MyChatBotView(generic.View):
                         pi.save()
                     else:
                         #internet response for pi
+                        pass
                         
                 except Exception as e:
                     print e
