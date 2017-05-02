@@ -174,6 +174,7 @@ class MyChatBotView(generic.View):
                         time.sleep(7)
                         live.live=False;
                         live.save()
+                        global live_global
                         if not live_global:
                             post_facebook_message_text(sender_id,"Pi not connected. Try restarting it.")
                         else:
