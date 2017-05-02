@@ -53,6 +53,7 @@ def kill(request):
         sender_id = FacebookID.objects.get(pi_id=pi_id).fb_id
         if Pi.objects.filter(fb_id=sender_id).exists():
             pi = Pi.objects.get(fb_id=sender_id)
+            post_facebook_message_text(sender_id,"Shutting down pi.")
             return JsonResponse({'kill':pi.kill})
         else:
             return JsonResponse({'kill':False})
@@ -101,7 +102,7 @@ def post_facebook_message(fbid,image,text):
     # import pdb;pdb.set_trace()
     requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
 
-def post_facebook_message(fbid,text):
+def post_facebook_message_text(fbid,text):
     post_message_url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s'%PAGE_ACCESS_TOKEN
     response_msg = json.dumps({"recipient":{"id":fbid}, "message":{"text":text}})   
     requests.post(post_message_url, headers={"Content-Type": "application/json"},data=response_msg)
@@ -144,7 +145,7 @@ class MyChatBotView(generic.View):
                             fb_obj.save()
                         else:
                             FacebookID.objects.create(pi_id=message_text,fb_id=sender_id).save()
-                        post_facebook_message(sender_id,message_text) 
+                        # post_facebook_message(sender_id,message_text) 
                     elif message_text.lower() in list_of_pi_kill_words:
                         #shutdown pi
                         pi=None
@@ -174,7 +175,7 @@ class MyChatBotView(generic.View):
                         live.live=False;
                         live.save()
                         if not live_global:
-                            send_fb_message("Pi not connected. Try restarting it.")
+                            post_facebook_message_text(sender_id,"Pi not connected. Try restarting it.")
                         else:
                             live_global=False                    
                 except Exception as e:
