@@ -168,7 +168,7 @@ class MyChatBotView(generic.View):
                             live.live=True
                             live.save()
                         else:
-                            live = live.objects.create(fb_id=sender_id,live=True)
+                            live = Live.objects.create(fb_id=sender_id,live=True)
                             live.save()
                         import time
                         time.sleep(7)
